@@ -1,17 +1,44 @@
 (function(){
   var app = angular.module('starter', ['ionic', 'ngCordova']);
 
-  app.controller('deviceCtrl', function($scope, $cordovaDevice, $ionicPlatform){
-    ionic.Platform.ready(function(){
-      console.log('infor: ', angular.toJson(ionic.Platform.platform()));
-      console.log('infor: ', angular.toJson(ionic.Platform.version()));
+  app.controller('deviceCtrl', function($scope, $cordovaDevice, $ionicPlatform, $cordovaCamera, $cordovaGeolocation){
 
-      try {
-        $scope.uuid = $cordovaDevice.getUUID();
-      }
-      catch (err) {
-        console.log("Error " + err.message);
-      }
+    $scope.pictureUrl = 'http://placehold.it/300x300';
+    $scope.takePicture = function(){
+      var options = {
+        destinationType: Camera.DestinationType.DATA_URL,
+        sourceType: Camera.PictureSourceType.CAMERA
+      };
+
+      $cordovaCamera.getPicture(options).then(function(imageData) {
+        $scope.pictureUrl = "data:image/jpeg;base64," + imageData;
+      }, function(err) {
+        console.log('error', err);
+      });
+    }
+
+    var posOptions = {timeout: 10000, enableHighAccuracy: false};
+    $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+      .then(function (position) {
+          $scope.lat  = position.coords.latitude
+          $scope.lng = position.coords.longitude
+      }, function(err) {
+        console.log('err: ', err)
+      });
+
+
+    ionic.Platform.ready(function(){
+      $scope.$apply(function(){
+        $scope.platform = ionic.Platform.platform();
+        $scope.version = ionic.Platform.version()
+        try {
+          $scope.device = $cordovaDevice.getModel();
+        }
+        catch (err) {
+          console.log("Error " + err.message);
+        }
+      });
     });
   });
 
