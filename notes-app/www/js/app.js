@@ -23,6 +23,7 @@ app.controller('ListCtrl', function($scope, $state, NoteStore){
 })
 
 app.controller('EditCtrl', function($scope, $state, NoteStore){
+  $scope.title = "Edit Note";
   $scope.note = angular.copy(NoteStore.get($state.params.nodeId));
   $scope.saveNote = function(){
     NoteStore.update($scope.note);
@@ -31,6 +32,7 @@ app.controller('EditCtrl', function($scope, $state, NoteStore){
 });
 
 app.controller('AddCtrl', function($scope, $state, NoteStore){
+  $scope.title = "Add Note";
   $scope.note = {
     id: (new Date()).getMilliseconds(),
     title: '',
